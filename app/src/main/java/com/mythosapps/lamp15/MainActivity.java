@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -24,9 +23,6 @@ public class MainActivity extends AppCompatActivity {
 
     boolean isFlashlightOn;
     private Camera mCamera;
-    private int camId = 0; // back camera = 0, front camera = 1
-    ImageView cameraPreview;
-    private int count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void releaseCameraAndPreview() {
-        cameraPreview = null;
         if (mCamera != null) {
             mCamera.stopPreview();
             mCamera.release();
@@ -114,10 +109,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void turnOff(View view) {
-
-            count = 0;
-            releaseCameraAndPreview();
-
+        releaseCameraAndPreview();
     }
 
     private boolean hasFlashlightFeature() {
