@@ -40,12 +40,15 @@ public class MainActivity extends AppCompatActivity {
                     Snackbar.make(view, "Your camera has no flashlight!", Snackbar.LENGTH_LONG).show();
                     return;
                 }
+
                 if (isFlashlightOn) {
                     isFlashlightOn = false;
                     turnOff(view);
+                    Snackbar.make(view, "Aus :(", Snackbar.LENGTH_LONG).show();
                 } else {
                     isFlashlightOn = true;
                     turnOn(view);
+                    Snackbar.make(view, "An :)", Snackbar.LENGTH_LONG).show();
                 }
 
             }
