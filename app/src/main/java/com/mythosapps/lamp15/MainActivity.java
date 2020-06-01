@@ -1,23 +1,24 @@
 package com.mythosapps.lamp15;
 
 import android.content.pm.PackageManager;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import android.util.Log;
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ImageView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
+import java.io.IOException;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -93,19 +94,32 @@ public class MainActivity extends AppCompatActivity {
             if (flashModes == null) {
                 return;
             } else {
-                if (count == 0) {
-                    params.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+
+                //if (count == 0) {
+                try {
+                    params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                     mCamera.setParameters(params);
+                    mCamera.setPreviewTexture(new SurfaceTexture(0));
                     mCamera.startPreview();
+                    //}
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
                 String flashMode = params.getFlashMode();
 
                 if (!Camera.Parameters.FLASH_MODE_TORCH.equals(flashMode)) {
-
+                    Snackbar.make(view, "Torch is off somehow..", Snackbar.LENGTH_LONG).show();
                     if (flashModes.contains(Camera.Parameters.FLASH_MODE_TORCH)) {
                         params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                         mCamera.setParameters(params);
+                        try {
+                            mCamera.setPreviewTexture(new SurfaceTexture(0));
+                            mCamera.startPreview();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Snackbar.make(view, "Torch is turned on now..", Snackbar.LENGTH_LONG).show();
                     } else {
                         Snackbar.make(view, "Has flash mode torch: none", Snackbar.LENGTH_LONG).show();
 
