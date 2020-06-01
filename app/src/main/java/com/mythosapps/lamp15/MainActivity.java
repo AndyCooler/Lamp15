@@ -18,7 +18,6 @@ import androidx.core.content.ContextCompat;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.io.IOException;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (!hasFlashlightFeature()) {
-                    Snackbar.make(view, "Has flashlight: none", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(view, "Your camera has no flashlight!", Snackbar.LENGTH_LONG).show();
                     return;
                 }
                 if (isFlashlightOn) {
@@ -56,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // ask for permission..
         if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.CAMERA}, 50);
         }
@@ -67,74 +67,38 @@ public class MainActivity extends AppCompatActivity {
         releaseCameraAndPreview();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        releaseCameraAndPreview();
+    }
+
     private void turnOn(View view) {
         if (mCamera == null) {
             try {
                 releaseCameraAndPreview();
-                /*if (camId == 0) {
-                    mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
-                }
-                else {
-                */
-                    mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
-                //}
+                mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
             } catch (Exception e) {
                 Snackbar.make(view, "Failed to open camera: " + e.getMessage(), Snackbar.LENGTH_LONG).show();
-                Log.e(getString(R.string.app_name), "failed to open Camera");
-                e.printStackTrace();
+                Log.e(getString(R.string.app_name), "failed to open Camera", e);
             }
         }
 
         if (mCamera != null) {
-
             final Camera.Parameters params = mCamera.getParameters();
-
             List<String> flashModes = params.getSupportedFlashModes();
 
             if (flashModes == null) {
                 return;
             } else {
-
-                //if (count == 0) {
                 try {
                     params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                     mCamera.setParameters(params);
                     mCamera.setPreviewTexture(new SurfaceTexture(0));
                     mCamera.startPreview();
-                    //}
                 } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                String flashMode = params.getFlashMode();
-
-                if (!Camera.Parameters.FLASH_MODE_TORCH.equals(flashMode)) {
-                    Snackbar.make(view, "Torch is off somehow..", Snackbar.LENGTH_LONG).show();
-                    if (flashModes.contains(Camera.Parameters.FLASH_MODE_TORCH)) {
-                        params.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-                        mCamera.setParameters(params);
-                        try {
-                            mCamera.setPreviewTexture(new SurfaceTexture(0));
-                            mCamera.startPreview();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Snackbar.make(view, "Torch is turned on now..", Snackbar.LENGTH_LONG).show();
-                    } else {
-                        Snackbar.make(view, "Has flash mode torch: none", Snackbar.LENGTH_LONG).show();
-
-                        params.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
-                        mCamera.setParameters(params);
-                        try {
-                            mCamera.autoFocus(new Camera.AutoFocusCallback() {
-                                public void onAutoFocus(boolean success, Camera camera) {
-                                    count = 1;
-                                }
-                            });
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
+                    Snackbar.make(view, "Failed to start flashlight: " + e.getMessage(), Snackbar.LENGTH_LONG).show();
+                    Log.e(getString(R.string.app_name), "failed to start Flashlight", e);
                 }
             }
         }
@@ -156,16 +120,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /*
-        @Override
-        protected void onResume() {
-            super.onResume();
-
-            FloatingActionButton fab = findViewById(R.id.fab);
-
-
-        }
-    */
     private boolean hasFlashlightFeature() {
         return getApplicationContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
     }
