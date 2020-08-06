@@ -1,6 +1,8 @@
 package com.mythosapps.lamp15;
 
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -44,11 +46,11 @@ public class MainActivity extends AppCompatActivity {
                 if (isFlashlightOn) {
                     isFlashlightOn = false;
                     turnOff(view);
-                    Snackbar.make(view, "Aus :(", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(view, "Lampe aus", Snackbar.LENGTH_LONG).show();
                 } else {
                     isFlashlightOn = true;
                     turnOn(view);
-                    Snackbar.make(view, "An :)", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(view, "Höhlenlampenforschung", Snackbar.LENGTH_LONG).show();
                 }
 
             }
@@ -61,9 +63,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
-        releaseCameraAndPreview();
+        // don't stop!! releaseCameraAndPreview();
     }
 
     @Override
