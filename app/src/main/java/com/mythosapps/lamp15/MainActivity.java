@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -46,10 +47,12 @@ public class MainActivity extends AppCompatActivity {
                 if (isFlashlightOn) {
                     isFlashlightOn = false;
                     turnOff(view);
+                    // TODO allow screeen to turn off when flashlight is off
                     Snackbar.make(view, "Lampe aus", Snackbar.LENGTH_LONG).show();
                 } else {
                     isFlashlightOn = true;
                     turnOn(view);
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                     Snackbar.make(view, "Höhlenlampenforschung", Snackbar.LENGTH_LONG).show();
                 }
 
